@@ -1,0 +1,28 @@
+---
+version: '3.8'
+services:
+  django:
+    build:
+      context: ../
+      dockerfile: ./docker/dockerfiles/dockerfile.django
+      target: base
+    image: django-base-${PROJECT_NAME}
+    container_name: django-base-${PROJECT_NAME}
+    environment:
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_DIALECT: ${DATABASE_DIALECT}
+    depends_on:
+      - database
+    ports:
+      - target: 8000
+        published: ${DD_PORT:-8000}
+        protocol: tcp
+        mode: host
+  database:
+    image: postgres:14.5-bullseye
+    container_name: database-base-${PROJECT_NAME}
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
